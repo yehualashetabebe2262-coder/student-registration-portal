@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Registration Portal</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background-color: #f4f6f9;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+      button:hover {
+        background: #218838;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+      th {
+        background-color: #007bff;
+        color: white;
+      }
+      #msg {
+        margin-top: 15px;
+        font-weight: bold;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Student Registration Portal</h2>
+
+      <div class="form-group">
+        <label>Student Name:</label>
+        <input type="text" id="name" placeholder="Enter name" />
+      </div>
+      <div class="form-group">
+        <label>Age:</label>
+        <input type="number" id="age" placeholder="Enter age" />
+      </div>
+      <div class="form-group">
+        <label>Phone Number:</label>
+        <input type="text" id="phone" placeholder="Enter phone" />
+      </div>
+      <button type="button" onclick="registerStudent()">
+        Register Student
+      </button>
+
+      <p id="msg"></p>
+
+      <h2>Registered Students</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody">
+          <!-- Data will load here -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // Fetch and display students
+      async function loadStudents() {
+        try {
+          const res = await fetch("/students");
+          const students = await res.json();
+          const tbody = document.getElementById("studentTableBody");
+          tbody.innerHTML = "";
+
+          students.forEach((s) => {
+            tbody.innerHTML += `
+                      <tr>
+                          <td>${s.student_id || s.id}</td>
+                          <td>${s.name}</td>
+                          <td>${s.age}</td>
+                          <td>${s.phone || "N/A"}</td>
+                      </tr>
+                  `;
+          });
+        } catch (err) {
+          console.error("Error loading students:", err);
+        }
+      }
+
+      // Load on page open
+      window.onload = loadStudents;
+
+      // Register student function
+      async function registerStudent() {
+        const name = document.getElementById("name").value.trim();
+        const age = document.getElementById("age").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const msg = document.getElementById("msg");
+
+        // Fixed: Added proper && logical operators
+        if (!name || !age || !phone) {
+          msg.style.color = "red";
+          msg.innerText = "Please fill out all fields!";
+          return;
+        }
+
+        try {
+          const res = await fetch("/students", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, age, phone }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            msg.style.color = "green";
+            msg.innerText = data.message;
+            document.getElementById("name").value = "";
+            document.getElementById("age").value = "";
+            document.getElementById("phone").value = "";
+            loadStudents(); // Refresh table immediately
+          } else {
+            msg.style.color = "red";
+            msg.innerText = data.message || "Failed to register";
+          }
+        } catch (err) {
+          console.error("Error:", err);
+          msg.style.color = "red";
+          msg.innerText = "Server connection error.";
+        }
+      }
+    </script>
+  </body>
+</html>
