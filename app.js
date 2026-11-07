@@ -53,6 +53,9 @@ app.post("/students", (req, res) => {
 });
 
 // Start Server
-app.listen(3002, () => {
-  console.log("Server running on http://localhost:3002");
+const PORT = process.env.PORT || 3002;
+app.listen(PORT, () => {
+  console.log("Server running on port ${PORT}");
 });
+const cors = require("cors");
+app.use(cors());
