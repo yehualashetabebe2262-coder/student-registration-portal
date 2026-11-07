@@ -1,9 +1,10 @@
 const express = require("express");
 const mysql = require("mysql2");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
-
+app.use(cors());
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -57,5 +58,3 @@ const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log("Server running on port ${PORT}");
 });
-const cors = require("cors");
-app.use(cors());
