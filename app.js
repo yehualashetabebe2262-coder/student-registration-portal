@@ -15,7 +15,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root", // Explicitly set your database user
   password: "", // Add your password here if you have one
-  database: "studentPortal",
+  database: "university",
 });
 
 db.connect((err) => {
