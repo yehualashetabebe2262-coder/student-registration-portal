@@ -1,10 +1,10 @@
 const express = require("express");
 const mysql = require("mysql2");
 const path = require("path");
-const cors = require("cors");
+////const cors = require("cors");
 
 const app = express();
-app.use(cors());
+// app.use(cors());
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -12,11 +12,10 @@ app.use(express.static(path.join(__dirname)));
 
 // Database Connection
 const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306,
+  host: "localhost",
+  user: "root", // Explicitly set your database user
+  password: "", // Add your password here if you have one
+  database: "studentPortal",
 });
 
 db.connect((err) => {
@@ -55,7 +54,7 @@ app.post("/students", (req, res) => {
 });
 
 // Start Server
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`); // Use backticks here
 });
